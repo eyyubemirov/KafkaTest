@@ -1,0 +1,39 @@
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://${DB_CONNECTION_IP:localhost}:${DB_CONNECTION_PORT:3308}/microservice_app?creaDatteabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: password
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      getAllStudents:
+        # configs for close state
+        sliding-window-type: count_based
+        failure-rate-threshold: 50.0
+        sliding-window-size: 6
+        # configs for open state
+        wait-duration-in-open-state: 10s
+        # configs for hal-open state
+        automatic-transition-from-open-to-half-open-enabled: true
+        permitted-number-of-calls-in-half-open-state: 2
+        max-wait-duration-in-half-open-state: 15000
+server:
+  port: 8081
